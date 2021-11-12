@@ -37,9 +37,35 @@ coverageData <- read.csv("data/coverageData.csv")
 #
 # 1. What data structure and data components do you notice in each of the 
 #    dataset?
+
+## Count the number of columns and add report it
+
+# rows and columns for ICFI dataset
+print(paste0("There are ", ncol(icfiData), " columns in the ICFI dataset."))
+print(paste0("There are ", nrow(icfiData), " rows in the ICFI dataset."))
+
+# rows and columns for SAM coverage dataset
+print(paste0("There are ", ncol(coverageData), " columns in the coverage dataset."))
+print(paste0("There are ", nrow(coverageData), " rows in the coverage dataset."))
+
+## Show the structure of the dataset 
+str(icfiData)                  ## very neat and important function to remember
+dplyr::glimpse(icfiData)       ## similar to str but from the dplyr package
+
+str(coverageData)              ## very neat and important function to remember
+dplyr::glimpse(coverageData)   ## similar to str but from the dplyr package
+
 # 2. What data structure and components are common in each of the dataset?
+
+## - Both are data.frames; tabular;
+## - they both have GPS data; both have spid
+names(coverageData)[names(coverageData) %in% names(icfiData)]  ## indexing
+
 # 3. Would you consider these datasets as spatial datasets?
-#
+## No and yes. No because it is technically not a spatial dataset from an R
+## perspective. But Yes because there is spatial data (GPS coordinates)
+## included in the dataset.
+
 
 ################################################################################
 #
