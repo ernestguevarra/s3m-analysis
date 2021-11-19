@@ -20,7 +20,6 @@
 ################################################################################
 
 # Read coverage dataset --------------------------------------------------------
-
 coverageData <- read.csv("data/coverageData.csv")
 
 ################################################################################
@@ -40,7 +39,44 @@ coverageData <- read.csv("data/coverageData.csv")
 
 # Task 1: Plot the data points
 
+## We can use the longitude and latitude variables of the data to plot
+##   * x-axis will be the longitude (longx)
+##   * y-axis will be the latitude (laty)
+plot(x = coverageData$longps, y = coverageData$latgps)
+
+## Create a plot with a solid circle coloured blue
+plot(x = coverageData$longps, y = coverageData$latgps, pch = 20, col = "blue")
+
+## Create a plot with a solid circle with coloured blue outline and 
+## light gray fill
+plot(
+  x = coverageData$longps, y = coverageData$latgps, 
+  pch = 21, col = "blue", bg = "gray70"
+)
+
+## Convert SpatialPointsDataFrame
+coverageDataSP <- SpatialPointsDataFrame(
+  coords = coverageData[ , c("longps", "latgps")],
+  data = coverageData,
+  proj4string = CRS(proj4string(CRS("+proj=longlat +datum=WGS84 +no_defs")))
+)
+
+## Plot coverageDataSP
+plot(coverageDataSP)
+
+## Plot coverageDataSP
+plot(coverageDataSP, pch = 21, col = "blue", bg = "gray70")
+
+
 # Task 2: Calculate case-finding effectiveness for each sampling point
+
+## Things to know and do to answer this question:
+##   * Which rows of data correspond to a sampling point? How many data points
+##     for each sampling point?
+##   * Perform some form of aggregation of each row of data for each sampling
+##     point
+##   * With the aggregated data, calculate coverage indicator
+
 
 # Task 3: Calculate treatment coverage for each sampling point
 
