@@ -96,6 +96,38 @@ niger3 <- readOGR(dsn = "data/NER_adm", layer = "NER_adm3")
 #
 # 1. What data structure and data components do you notice in each of the 
 #    datasets?
+
+## See the structure of the spatial objects
+str(niger0)
+str(niger1)
+str(niger2)
+str(niger3)
+
+## Access the slots of each spatial object
+niger0@data
+niger0@polygons
+niger0@plotOrder
+niger0@bbox
+niger0@proj4string
+
+## Access the data.frame in the data slot
+niger0$NAME_ENGLI
+niger0[["NAME_ENGLI"]]
+
+## Access the names of the variables in the data.frame in the data slot
+names(niger0)
+
+
 # 2. What data structure and components are common in each of the dataset?
-# 3. Would you consider these datasets as spatial datasets?
-#
+
+##
+## Different in:
+##    1. number of polygons in the dataset - niger0 has 1, niger1 has more
+##    2. data.frame associated with spatial dataset will have some similar
+##       columns/variables but also have unique/different variables/columns
+## Similar in:
+##    1. they all have the same CRS projection 
+##
+
+
+# 3. Would you consider these datasets as spatial datasets? - YES
