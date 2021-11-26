@@ -73,9 +73,50 @@ plot(coverageDataSP, pch = 21, col = "blue", bg = "gray70")
 ## Things to know and do to answer this question:
 ##   * Which rows of data correspond to a sampling point? How many data points
 ##     for each sampling point?
+
+## Answer: Data is structured as about 3 rows of data/data points corresponding
+## to a sampling point.
+
 ##   * Perform some form of aggregation of each row of data for each sampling
 ##     point
+
+## Sum the coverage data for each sampling point
+## For coordinates, get the min-max latitude, min-max longitude, also can get
+## mean values of longitude and latitude
+
+if (!requireNamespace(dplyr)) install.packages("dplyr")
+library(dplyr)
+
+coverageDataBySP <- coverageData %>%
+  group_by(spid) %>%
+  summarise(
+    pop = sum(pop, na.rm = TRUE),
+    min_lat = min(latgps, na.rm = TRUE),
+    max_lat = max(latgps, na.rm = TRUE),
+    min_lon = min(longps, na.rm = TRUE),
+    max_lon = max(longps, na.rm = TRUE),
+    mean_lat = mean(latgps, na.rm = TRUE),
+    mean_lon = mean(longps, na.rm = TRUE),
+    sam_total = sum(a, na.rm = TRUE), 
+    sam_in = sum(b, na.rm = TRUE), 
+    sam_out = sum(c, na.rm = TRUE), 
+    sam_rec = sum(d, na.rm = TRUE)
+  )
+
+## Plot the original dataset
+plot(
+  x = coverageData$longps, y = coverageData$latgps, 
+  pch = 21, col = "blue", bg = "gray70"
+)
+
+## Plot summarised dataset
+points(
+  x = coverageDataBySP$mean_lon, y = coverageDataBySP$mean_lat,
+  pch = 16, col = "red"
+)
+
 ##   * With the aggregated data, calculate coverage indicator
+## Creating your own function
 
 
 # Task 3: Calculate treatment coverage for each sampling point
