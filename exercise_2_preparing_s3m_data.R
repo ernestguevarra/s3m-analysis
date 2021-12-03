@@ -97,6 +97,8 @@ coverageDataBySP <- coverageData %>%
     max_lon = max(longps, na.rm = TRUE),
     mean_lat = mean(latgps, na.rm = TRUE),
     mean_lon = mean(longps, na.rm = TRUE),
+    median_lat = median(latgps, na.rm = TRUE),
+    median_lon = median(longps, na.rm = TRUE),
     sam_total = sum(a, na.rm = TRUE), 
     sam_in = sum(b, na.rm = TRUE), 
     sam_out = sum(c, na.rm = TRUE), 
@@ -115,10 +117,90 @@ points(
   pch = 16, col = "red"
 )
 
+## Plot meadian GPS coordinates
+points(
+  x = coverageDataBySP$median_lon, y = coverageDataBySP$median_lat,
+  pch = 1, col = "green", cex = 2
+)
+
 ##   * With the aggregated data, calculate coverage indicator
 ## Creating your own function
 
 
 # Task 3: Calculate treatment coverage for each sampling point
 
+## Case-finding effectiveness
+with(coverageDataBySP, sam_in / sam_total)
+#coverageDataBySP$case_finding <- with(coverageDataBySP, sam_in / sam_total)
+
+coverageDataBySP$sam_in / coverageDataBySP$sam_total
+coverageDataBySP$case_finding <- coverageDataBySP$sam_in / coverageDataBySP$sam_total
+
+coverageDataBySP %>%
+  mutate(case_finding = sam_in / sam_total)
+
+## Treatment coverage
+##
+## Rout = floor((1 / k) * (Rin * (Cin + Cout + 1) / (Cin + 1) - Rin))
+##
+r_out <- with(
+  coverageDataBySP, 
+  floor(
+    (1 / 3) * (sam_rec * ((sam_in + sam_out + 1) / (sam_in + 1)) - sam_rec)
+  )
+)
+
+##
+## treatment_coverage <- (Cin + Rin) / (Cin + Rin + Cout + Rout))
+##
+with(
+  coverageDataBySP, 
+  (sam_in + sam_rec) / (sam_in + sam_rec + sam_out + r_out)
+)
+
+## Writing functions in R
+
+## Create a function to calculate case-finding effectiveness
+calculate_case_finding <- function(sam_in, sam_total) {
+  ## Add your scripts
+  sam_in / sam_total
+}
+
+## Apply the function
+with(
+  coverageDataBySP, 
+  calculate_case_finding(sam_in = sam_in, sam_total = sam_total)
+)
+
+## Create a function to calculate treatment coverage
+calculate_rec_out <- function(k, sam_in, sam_out, sam_rec) {
+  floor(
+    (1 / k) * (sam_rec * ((sam_in + sam_out + 1) / (sam_in + 1)) - sam_rec)
+  )
+}
+
+## Apply r_out function
+r_out <- with(
+  coverageDataBySP, 
+  calculate_rec_out(
+    k = 3, sam_in = sam_in, sam_out = sam_out, sam_rec = sam_rec
+  )
+)
+
+## Create function for calculating treatment coverage
+calculate_treatment <- function(sam_in, sam_out, sam_rec, k) {
+  r_out <- calculate_rec_out(
+    k = k, sam_in = sam_in, sam_out = sam_out, sam_rec = sam_rec
+  )
+  
+  (sam_in + sam_rec) / (sam_in + sam_rec + sam_out + r_out)
+}
+
+## Apply calculate_treatment
+with(
+  coverageDataBySP, 
+  calculate_treatment(
+    sam_in = sam_in, sam_out = sam_out, sam_rec = sam_rec, k = 3
+  )
+)
 
