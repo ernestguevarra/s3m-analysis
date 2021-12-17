@@ -30,20 +30,45 @@ niger1 <- readOGR(dsn = "data/NER_adm", layer = "NER_adm1")
 niger2 <- readOGR(dsn = "data/NER_adm", layer = "NER_adm2")
 niger3 <- readOGR(dsn = "data/NER_adm", layer = "NER_adm3")
 
-# Convert coverage data into class Spatial object
+# Create a Dosso region administrative map
+dosso <- subset(niger1, NAME_1 == "Dosso")
+
+# Convert coverage data into class Spatial object and subset to Dosso region
 coverageSP <- SpatialPointsDataFrame(
   coords = coverageData[ , c("longps", "latgps")],
   data = coverageData,
   proj4string = CRS(proj4string(niger0))
-)
+) |>
+  subset(spid %in% 154:217)
 
 # Step 2: Create an interpolation grid -----------------------------------------
-intPoints <- spsample(x = niger0, n = 100000, type = "hexagonal")
+intPoints <- spsample(x = dosso, n = 10000, type = "hexagonal")
 intGrid <- HexPoints2SpatialPolygons(hex = intPoints)
+
+proj4string(coverageSP) <- CRS("+proj=longlat +datum=WGS84 +no_defs")
+proj4string(intPoints) <- CRS("+proj=longlat +datum=WGS84 +no_defs")
 
 # Step 3: Interpolate estimates at spatial units with no estimates
 intCoverage <- idw(
-  formula = b ~ 1,
-  locations = coverageSP,
+  formula = b / a ~ 1,
+  locations = coverageSP |> subset(a > 0),
   newdata = intPoints
 )
+
+# Plot coverage estimates
+pCoverage <- cut(
+  intCoverage$var1.pred, 
+  breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1), 
+  labels = FALSE
+)
+
+coverage_colours <- RColorBrewer::brewer.pal(n = 6, name = "RdYlGn")
+
+plot(
+  intGrid, 
+  col = coverage_colours[pCoverage + 1], 
+  borders = coverage_colours[pCoverage + 1]
+)
+
+
+

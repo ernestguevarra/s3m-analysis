@@ -204,3 +204,10 @@ with(
   )
 )
 
+## Add treatment coverage to data frame
+coverageDataBySP$treatment_coverage <- with(
+  coverageDataBySP, 
+  calculate_treatment(
+    sam_in = sam_in, sam_out = sam_out, sam_rec = sam_rec, k = 3
+  )
+)
